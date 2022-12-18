@@ -14,14 +14,14 @@ public class RoomSystemState : BaseStateMachine
         if (state.gameManager.GetComponent<GameRoom>().createRoom == true)
         {
             temp = state.gameManager.GetComponent<GameRoom>().gameRoomName.text;
-            state.gameManager.GetComponent<NetworkedClient>().SendMessageToHost("3" + "," + temp);
+            state.gameManager.GetComponent<NetworkedClient>().SendMessageToServer("3" + "," + temp);
             state.gameManager.GetComponent<GameRoom>().createRoom = false;
         }
 
         if(state.gameManager.GetComponent<GameRoom>().back == true)
         {
             temp = state.gameManager.GetComponent<GameRoom>().gameRoomName.text;
-            state.gameManager.GetComponent<NetworkedClient>().SendMessageToHost("4" + "," + temp);
+            state.gameManager.GetComponent<NetworkedClient>().SendMessageToServer("4" + "," + temp);
             state.gameManager.GetComponent<GameRoom>().back = false;
             state.gameManager.GetComponent<GameRoom>().waitingForPlayerText.SetActive(false);
         }

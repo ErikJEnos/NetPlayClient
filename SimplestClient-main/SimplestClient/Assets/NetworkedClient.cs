@@ -7,60 +7,31 @@ using UnityEngine.Networking;
 
 public class NetworkedClient : MonoBehaviour
 {
-
     int connectionID;
     int maxConnections = 1000;
     int reliableChannelID;
     int unreliableChannelID;
     int hostID;
-    int socketPort = 5491;
+    int socketPort = 9003;
     byte error;
     bool isConnected = false;
     int ourClientID;
 
-    public GameObject gameManager;
-
-    public int playerTurn = 1;
-
-    public List<string> clientChatlog;
-
-    public static class ServerToClientSignifiers
-    {
-        public const int AccountComplete = 01;
-        public const int AccountFailed = 02;
-        public const int LoginSuccessfull = 03;
-        public const int LoginFailed = 04;
-        public const int GameRoomSuccessfull = 05;
-        public const int GameRoomFailed = 06;
-        public const int WaitingForAnotherPlayer = 07;
-        public const int EnterPlayState = 08;
-        public const int playTile = 09;
-        public const int Winner = 10;
-        public const int Loser = 11;
-        public const int LockPlayerControls = 12;
-        public const int ChatLogMessage = 13;
-        public const int Replay = 14;
-    }
-
- 
-
-    // Start is called before the first frame update
     void Start()
     {
-        Connect();
-        gameManager = GameObject.Find("GameManager");
+        if (NetworkedClientProcessing.GetNetworkedClient() == null)
+        {
+            DontDestroyOnLoad(this.gameObject);
+            NetworkedClientProcessing.SetNetworkedClient(this);
+            Connect();
+        }
+        else
+        {
+            Debug.Log("Singleton-ish architecture violation detected, investigate where NetworkedClient.cs Start() is being called.  Are you creating a second instance of the NetworkedClient game object or has the NetworkedClient.cs been attached to more than one game object?");
+            Destroy(this.gameObject);
+        }
     }
-
-    // Update is called once per frame
     void Update()
-    {
-        if(Input.GetKeyDown(KeyCode.S))
-            SendMessageToHost("Hello from client");
-
-        UpdateNetworkConnection();
-    }
-
-    private void UpdateNetworkConnection()
     {
         if (isConnected)
         {
@@ -75,162 +46,52 @@ public class NetworkedClient : MonoBehaviour
             switch (recNetworkEvent)
             {
                 case NetworkEventType.ConnectEvent:
-                    Debug.Log("connected.  " + recConnectionID);
-                    ourClientID = recConnectionID;
+                    NetworkedClientProcessing.ConnectionEvent();
                     break;
                 case NetworkEventType.DataEvent:
                     string msg = Encoding.Unicode.GetString(recBuffer, 0, dataSize);
-                    ProcessRecievedMsg(msg, recConnectionID);
-                    //Debug.Log("got msg = " + msg);
+                    NetworkedClientProcessing.ReceivedMessageFromServer(msg, connectionID);
                     break;
                 case NetworkEventType.DisconnectEvent:
                     isConnected = false;
-                    Debug.Log("disconnected.  " + recConnectionID);
+                    NetworkedClientProcessing.DisconnectionEvent();
                     break;
             }
         }
     }
-    
-    private void Connect()
+    public void Connect()
     {
-
         if (!isConnected)
         {
-            Debug.Log("Attempting to create connection");
-
             NetworkTransport.Init();
-
             ConnectionConfig config = new ConnectionConfig();
             reliableChannelID = config.AddChannel(QosType.Reliable);
             unreliableChannelID = config.AddChannel(QosType.Unreliable);
             HostTopology topology = new HostTopology(config, maxConnections);
             hostID = NetworkTransport.AddHost(topology, 0);
-            Debug.Log("Socket open.  Host ID = " + hostID);
-
             connectionID = NetworkTransport.Connect(hostID, "192.168.0.15", socketPort, 0, out error); // server is local on network
 
             if (error == 0)
             {
                 isConnected = true;
-
-                Debug.Log("Connected, id = " + connectionID);
-
+                Debug.Log("Network client init successful, waiting for server connection.");
             }
+            else
+                Debug.Log("Network client init failed!");
         }
     }
-    
     public void Disconnect()
     {
         NetworkTransport.Disconnect(hostID, connectionID, out error);
     }
-    
-    public void SendMessageToHost(string msg)
+    public void SendMessageToServer(string msg)
     {
         byte[] buffer = Encoding.Unicode.GetBytes(msg);
         NetworkTransport.Send(hostID, connectionID, reliableChannelID, buffer, msg.Length * sizeof(char), out error);
-
-
     }
-
-
-    private void ProcessRecievedMsg(string msg, int id)
-    {
-        string[] temp = msg.Split(',');
-        int signifierID = int.Parse(temp[0]);
-
-        if (signifierID == ServerToClientSignifiers.AccountComplete)
-        {
-            Debug.Log("AccountComplete");
-        }
-        if (signifierID == ServerToClientSignifiers.AccountFailed)
-        {
-            Debug.Log("AccountFailed");
-        }
-        if (signifierID == ServerToClientSignifiers.LoginSuccessfull)
-        {
-            Debug.Log("LoginSuccessfull");
-            gameManager.GetComponent<AccountLogin>().failed.SetActive(false);
-            gameManager.GetComponent<AccountLogin>().MenuStatePanel.SetActive(false);
-            gameManager.GetComponent<AccountLogin>().RoomSystemStatePanel.SetActive(true);
-            gameManager.GetComponent<StateMachineManger>().loginState.ButtonPress(gameManager.GetComponent<StateMachineManger>());
-        }
-        if (signifierID == ServerToClientSignifiers.LoginFailed)
-        {
-            Debug.Log("LoginFailed");
-            gameManager.GetComponent<AccountLogin>().failed.SetActive(true);
-        }
-
-        if (signifierID == ServerToClientSignifiers.WaitingForAnotherPlayer)
-        {
-            gameManager.GetComponent<GameRoom>().waitingForPlayerText.SetActive(true);
-            gameManager.GetComponent<GameRoom>().buttonBack.SetActive(true);
-        }
-
-        if (signifierID == ServerToClientSignifiers.EnterPlayState)
-        {
-            gameManager.GetComponent<GameRoom>().GamePanel.SetActive(true);
-            gameManager.GetComponent<GameRoom>().RoomPanel.SetActive(false);
-            gameManager.GetComponent<StateMachineManger>().roomSystemState.ButtonPress(gameManager.GetComponent<StateMachineManger>());
-
-            //SendMessageToHost(ServerToClientSignifiers.LockPlayerControls + ",");
-        }
-
-        if (signifierID == ServerToClientSignifiers.playTile)
-        {
-            Debug.Log(temp[0] + " : " + temp[1] + " : " + temp[2]);
-            if (id == 1)
-            {
-                gameManager.GetComponent<TicTacToe>().tiles[int.Parse(temp[2])].text = temp[1];
-                gameManager.GetComponent<TicTacToe>().tiles[int.Parse(temp[2])].transform.parent.GetComponent<Button>().interactable = false;
-            }
-            else if (id == 2)
-            {
-                gameManager.GetComponent<TicTacToe>().tiles[int.Parse(temp[2])].text = temp[1];
-                gameManager.GetComponent<TicTacToe>().tiles[int.Parse(temp[2])].transform.parent.GetComponent<Button>().interactable = false;
-            }
-
-        }
-
-        if (signifierID == ServerToClientSignifiers.Winner)
-        {
-            gameManager.GetComponent<TicTacToe>().winnerText.text = "YOU WIN";
-        }
-
-        if (signifierID == ServerToClientSignifiers.Loser)
-        {
-            //gameManager.GetComponent<TicTacToe>().winnerText.text = "YOU LOSE";
-        }
-
-        if (signifierID == ServerToClientSignifiers.ChatLogMessage)
-        {
-            clientChatlog.Add(temp[1]);
-            //Debug.Log("Before wtriting chat: "+ temp[1].ToString());
-            gameManager.GetComponent<TicTacToe>().chat.text = ""; 
-
-            for (int x = 0; x < clientChatlog.Count; x++)
-            {
-                gameManager.GetComponent<TicTacToe>().chat.text += "Player: " + id + " -" + clientChatlog[x] + "\n";
-            }
-
-            Debug.Log(temp[0] + " : " + temp[1] + " : " + id);
-        }
-
-        if (signifierID == ServerToClientSignifiers.Replay)
-        {
-            for(int x = 0; x < gameManager.GetComponent<TicTacToe>().buttonList.Length; x++) 
-            {
-                gameManager.GetComponent<TicTacToe>().tiles[x].text = "";
-                gameManager.GetComponent<TicTacToe>().tiles[x].transform.parent.GetComponent<Button>().interactable = true;
-            }
-        }
-
-    }
-
     public bool IsConnected()
     {
         return isConnected;
     }
-
-
 
 }

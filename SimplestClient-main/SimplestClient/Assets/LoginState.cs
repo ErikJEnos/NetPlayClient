@@ -16,7 +16,7 @@ public class LoginState : BaseStateMachine
         {
             temp = state.gameManager.GetComponent<AccountLogin>().username_Input.text + "," + state.gameManager.GetComponent<AccountLogin>().password_Input.text;
            
-            state.gameManager.GetComponent<NetworkedClient>().SendMessageToHost("1" + "," + temp);//createAccount           
+            state.gameManager.GetComponent<NetworkedClient>().SendMessageToServer("1" + "," + temp);//createAccount           
 
             state.gameManager.GetComponent<AccountLogin>().login = false;
         }
@@ -25,7 +25,7 @@ public class LoginState : BaseStateMachine
         {
             temp = state.gameManager.GetComponent<AccountLogin>().username_Input.text + "," + state.gameManager.GetComponent<AccountLogin>().password_Input.text;
 
-            state.gameManager.GetComponent<NetworkedClient>().SendMessageToHost("2" + "," + temp);//loginAccount
+            state.gameManager.GetComponent<NetworkedClient>().SendMessageToServer("2" + "," + temp);//loginAccount
 
             state.gameManager.GetComponent<AccountLogin>().saved = false;
         }

@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using System.Text;
+using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.Networking;
 public class TicTacToe : MonoBehaviour
 {
     public GameObject gameManager;
@@ -30,56 +34,56 @@ public class TicTacToe : MonoBehaviour
 
     public void Button1()
     {
-        gameManager.GetComponent<NetworkedClient>().SendMessageToHost("5" + "," + "0" + ",");
+        gameManager.GetComponent<NetworkedClient>().SendMessageToServer("5" + "," + "0" + ",");
         
 
     }
 
     public void Button2()
     {
-        gameManager.GetComponent<NetworkedClient>().SendMessageToHost("5" + "," + "1" + ",");
+        gameManager.GetComponent<NetworkedClient>().SendMessageToServer("5" + "," + "1" + ",");
 
     }
 
     public void Button3()
     {
-        gameManager.GetComponent<NetworkedClient>().SendMessageToHost("5" + "," + "2" + ",");
+        gameManager.GetComponent<NetworkedClient>().SendMessageToServer("5" + "," + "2" + ",");
 
     }
 
     public void Button4()
     {
-        gameManager.GetComponent<NetworkedClient>().SendMessageToHost("5" + "," + "3" + ",");
+        gameManager.GetComponent<NetworkedClient>().SendMessageToServer("5" + "," + "3" + ",");
 
     }
 
     public void Button5()
     {
-        gameManager.GetComponent<NetworkedClient>().SendMessageToHost("5" + "," + "4" + ",");
+        gameManager.GetComponent<NetworkedClient>().SendMessageToServer("5" + "," + "4" + ",");
 
     }
 
     public void Button6()
     {
-        gameManager.GetComponent<NetworkedClient>().SendMessageToHost("5" + "," + "5" + ",");
+        gameManager.GetComponent<NetworkedClient>().SendMessageToServer("5" + "," + "5" + ",");
 
     }
 
     public void Button7()
     {
-        gameManager.GetComponent<NetworkedClient>().SendMessageToHost("5" + "," + "6" + ",");
+        gameManager.GetComponent<NetworkedClient>().SendMessageToServer("5" + "," + "6" + ",");
 
     }
 
     public void Button8()
     {
-        gameManager.GetComponent<NetworkedClient>().SendMessageToHost("5" + "," + "7" + ",");
+        gameManager.GetComponent<NetworkedClient>().SendMessageToServer("5" + "," + "7" + ",");
 
     }
 
     public void Button9()
     {
-        gameManager.GetComponent<NetworkedClient>().SendMessageToHost("5" + "," + "8" + ",");
+        gameManager.GetComponent<NetworkedClient>().SendMessageToServer("5" + "," + "8" + ",");
 
     }
 
@@ -88,90 +92,90 @@ public class TicTacToe : MonoBehaviour
     {
         if(tiles[0].text == "X" && tiles[1].text == "X" && tiles[2].text == "X")
         {
-            gameManager.GetComponent<NetworkedClient>().SendMessageToHost("6"+","+"X");
+            gameManager.GetComponent<NetworkedClient>().SendMessageToServer("6"+","+"X");
             won = true;
         }
 
         else if (tiles[0].text == "O" && tiles[1].text == "O" && tiles[2].text == "O")
         {
-            gameManager.GetComponent<NetworkedClient>().SendMessageToHost("6" + "," + "O");
+            gameManager.GetComponent<NetworkedClient>().SendMessageToServer("6" + "," + "O");
             won = true;
         }
 
         if (tiles[0].text == "X" && tiles[3].text == "X" && tiles[6].text == "X")
         {
-            gameManager.GetComponent<NetworkedClient>().SendMessageToHost("6" + "," + "X");
+            gameManager.GetComponent<NetworkedClient>().SendMessageToServer("6" + "," + "X");
             won = true;
         }
         else if(tiles[0].text == "O" && tiles[3].text == "O" && tiles[6].text == "O")
         {
-            gameManager.GetComponent<NetworkedClient>().SendMessageToHost("6" + "," + "O");
+            gameManager.GetComponent<NetworkedClient>().SendMessageToServer("6" + "," + "O");
             won = true;
         }
 
         if (tiles[1].text == "X" && tiles[4].text == "X" && tiles[7].text == "X")
         {
-            gameManager.GetComponent<NetworkedClient>().SendMessageToHost("6" + "," + "X");
+            gameManager.GetComponent<NetworkedClient>().SendMessageToServer("6" + "," + "X");
             won = true;
         }
         else if (tiles[1].text == "O" && tiles[4].text == "O" && tiles[7].text == "O")
         {
-            gameManager.GetComponent<NetworkedClient>().SendMessageToHost("6" + "," + "O");
+            gameManager.GetComponent<NetworkedClient>().SendMessageToServer("6" + "," + "O");
             won = true;
         }
 
         if (tiles[2].text == "X" && tiles[5].text == "X" && tiles[8].text == "X")
         {
-            gameManager.GetComponent<NetworkedClient>().SendMessageToHost("6" + "," + "X");
+            gameManager.GetComponent<NetworkedClient>().SendMessageToServer("6" + "," + "X");
             won = true;
         }
         else if (tiles[2].text == "O" && tiles[5].text == "O" && tiles[8].text == "O")
         {
-            gameManager.GetComponent<NetworkedClient>().SendMessageToHost("6" + "," + "O");
+            gameManager.GetComponent<NetworkedClient>().SendMessageToServer("6" + "," + "O");
             won = true;
         }
 
         if (tiles[3].text == "X" && tiles[4].text == "X" && tiles[5].text == "X")
         {
-            gameManager.GetComponent<NetworkedClient>().SendMessageToHost("6" + "," + "X");
+            gameManager.GetComponent<NetworkedClient>().SendMessageToServer("6" + "," + "X");
             won = true;
         }
         else if (tiles[3].text == "O" && tiles[4].text == "O" && tiles[5].text == "O")
         {
-            gameManager.GetComponent<NetworkedClient>().SendMessageToHost("6" + "," + "O");
+            gameManager.GetComponent<NetworkedClient>().SendMessageToServer("6" + "," + "O");
             won = true;
         }
 
         if (tiles[6].text == "X" && tiles[7].text == "X" && tiles[8].text == "X")
         {
-            gameManager.GetComponent<NetworkedClient>().SendMessageToHost("6" + "," + "X");
+            gameManager.GetComponent<NetworkedClient>().SendMessageToServer("6" + "," + "X");
             won = true;
         }
         else if (tiles[6].text == "O" && tiles[7].text == "O" && tiles[8].text == "O")
         {
-            gameManager.GetComponent<NetworkedClient>().SendMessageToHost("6" + "," + "O");
+            gameManager.GetComponent<NetworkedClient>().SendMessageToServer("6" + "," + "O");
             won = true;
         }
 
         if (tiles[0].text == "X" && tiles[4].text == "X" && tiles[8].text == "X")
         {
-            gameManager.GetComponent<NetworkedClient>().SendMessageToHost("6" + "," + "X");
+            gameManager.GetComponent<NetworkedClient>().SendMessageToServer("6" + "," + "X");
             won = true;
         }
         else if (tiles[0].text == "O" && tiles[4].text == "O" && tiles[8].text == "O")
         {
-            gameManager.GetComponent<NetworkedClient>().SendMessageToHost("6" + "," + "O");
+            gameManager.GetComponent<NetworkedClient>().SendMessageToServer("6" + "," + "O");
             won = true;
         }
 
         if (tiles[2].text == "X" && tiles[4].text == "X" && tiles[6].text == "X")
         {
-            gameManager.GetComponent<NetworkedClient>().SendMessageToHost("6" + "," + "X");
+            gameManager.GetComponent<NetworkedClient>().SendMessageToServer("6" + "," + "X");
             won = true;
         }
         else if (tiles[2].text == "O" && tiles[4].text == "O" && tiles[6].text == "O")
         {
-            gameManager.GetComponent<NetworkedClient>().SendMessageToHost("6" + "," + "O");
+            gameManager.GetComponent<NetworkedClient>().SendMessageToServer("6" + "," + "O");
             won = true;
         }
 
@@ -186,7 +190,7 @@ public class TicTacToe : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Return))
         {
-            gameManager.GetComponent<NetworkedClient>().SendMessageToHost("13" + "," + chatInput.text + ",");
+            gameManager.GetComponent<NetworkedClient>().SendMessageToServer("13" + "," + chatInput.text + ",");
             chatInput.text = "";
         }
     }
